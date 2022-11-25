@@ -1,12 +1,12 @@
-#                                               click_playground                
-#          client------------------------------------router-----------------------------------------server
+#                                             
+#          client--------------------------------click-playground-----------------------------------------server
 #          8.8.8.5       click_in           8.8.8.10       9.9.9.10            click_out            9.9.9.5
 #                                           (IN_IP)        (OUT_IP)
 version: "2.1"
 services:
-  click_router:
-    container_name: click_router
-    image: click_playground/click_router
+  click_playground:
+    container_name: click_playground
+    image: click_playground/click_pg
     environment:
       - IN_IP=8.8.8.10
       - IN_HOST=8.8.8.0
