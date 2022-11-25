@@ -1,0 +1,71 @@
+#                                               click_playground                
+#          client------------------------------------router-----------------------------------------server
+#          8.8.8.5       click_in           8.8.8.10       9.9.9.10            click_out            9.9.9.5
+#                                           (IN_IP)        (OUT_IP)
+version: "2.1"
+services:
+  click_router:
+    container_name: click_router
+    image: click_playground/click_router
+    environment:
+      - IN_IP=8.8.8.10
+      - IN_HOST=8.8.8.0
+      - OUT_IP=9.9.9.10
+      - OUT_HOST=9.9.9.0
+    networks:
+      click_in:
+        ipv4_address: 8.8.8.10
+      click_out:
+        ipv4_address: 9.9.9.10
+    stdin_open: true
+    ports:
+      - "8000:80"
+    cap_add:
+      - NET_ADMIN
+    privileged: true
+    tty: true
+  click_client :
+    container_name: click_client
+    image: click_playground/click_ep
+    environment:
+      - IN_IP=8.8.8.10
+      - IN_HOST=8.8.8.0
+      - OUT_IP=9.9.9.10
+      - OUT_HOST=9.9.9.0
+    networks:
+      click_in:
+        ipv4_address: 8.8.8.5
+    stdin_open: true
+    tty: true
+    cap_add:
+      - NET_ADMIN
+    command: 
+      /client/startup.sh
+  click_server :
+    container_name: click_server
+    image: click_playground/click_ep
+    environment:
+      - IN_IP=8.8.8.10
+      - IN_HOST=8.8.8.0
+      - OUT_IP=9.9.9.10
+      - OUT_HOST=9.9.9.0
+    networks:
+      click_out:
+        ipv4_address: 9.9.9.5
+    stdin_open: true
+    tty: true
+    cap_add:
+      - NET_ADMIN
+    command: 
+      /server/startup.sh
+networks:
+  click_in:
+    ipam:
+      driver: default
+      config:
+        - subnet: "8.8.8.0/24"
+  click_out:
+    ipam:
+      driver: default
+      config:
+        - subnet: "9.9.9.0/24"
